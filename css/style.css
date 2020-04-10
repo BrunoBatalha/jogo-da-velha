@@ -167,10 +167,16 @@ body footer button:active {
     body, html {
         font-size: 10px;
     }
+    body footer button {
+        font-size: 2rem;
+    }
 }
 
 @media (max-width:460px) {
     body, html {
         font-size: 5px;
+    }
+    body footer button {
+        font-size: 2.5rem;
     }
 }
