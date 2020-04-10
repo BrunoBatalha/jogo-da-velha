@@ -1,7 +1,17 @@
 window.onload = () => {
+    const SYMBOL_X = 'x';
+    const SYMBOL_O = 'o';
+    const MODE_VS_IA = 'VS IA';
+    const MODE_VS_PLAYER = 'VS JOGADOR';
+    let gameMode = sessionStorage.getItem('mode') || MODE_VS_PLAYER;
     let someoneWin = false;
     let draw = false;
     let areasWins = [];
+    const btnVs1 = document.getElementById('1vs1');
+    const btnVsIA = document.getElementById('1vsIA');
+    const btnVoltar = document.getElementById('voltar')
+    const btnMenu = document.getElementById('menu');
+    const btnNewGame = document.getElementById('new-game');
     const title = document.getElementById('title');
     const scoreX = document.querySelectorAll('.score-X')
     const scoreO = document.querySelectorAll('.score-O')
@@ -19,9 +29,29 @@ window.onload = () => {
         ];
     const buttons = document.querySelectorAll('.btn-area');
 
+    sessionStorage.setItem('mode', gameMode);
     sessionStorage.setItem('play', 'p1');
     sessionStorage.setItem('scoreX', 0);
     sessionStorage.setItem('scoreO', 0);
+
+    newGame();
+
+    btnMenu.addEventListener('click', e => {
+        const modal = document.querySelector('.modal');
+        modal.classList.add('d-flex');
+        modal.classList.remove('d-none');
+    });
+
+    btnVoltar.addEventListener('click', e => {
+        const modal = document.querySelector('.modal');
+        modal.classList.add('d-none');
+        modal.classList.remove('d-flex');
+    });
+
+    btnNewGame.addEventListener('click', newGame);
+
+    btnVs1.addEventListener('click', e => changeModeGame(MODE_VS_PLAYER));
+    btnVsIA.addEventListener('click', e => changeModeGame(MODE_VS_IA));
 
     buttons.forEach((btn, index) => {
         btn.addEventListener('click', e => eventClick(e, index));
@@ -32,21 +62,38 @@ window.onload = () => {
     });
 
     function eventClick(e, index) {
-        click(e);
-        listernerPlays(index);
-        if (someoneWin) {
-            changeColorButtons();
-            finishWithWinner();
-        } else if (draw) finishWithDraw();
-        else toggleTurn();
+        let playerCanPlay = false;
+        if (gameMode === MODE_VS_IA) {
+            if (getTurnPlay() === 'p1') {
+                playerCanPlay = true;
+            }
+        } else {
+            playerCanPlay = true
+        }
+        if (playerCanPlay && areaGame[index] === -1) {
+            click(e);
+            listenerPlays(index);
+            listenerStateGame();
+        }
+
     }
 
-    function click({ target: button }) {
-        if (isFill(button)) {
-            button.classList.remove('normal-font', 'increase-font');
-            button.classList.add('btn-selected');
-            button.innerHTML = getTurnPlay() === 'p1' ? 'X' : 'O';
+    setInterval(() => {
+        if (gameMode === MODE_VS_IA && getTurnPlay() === 'p2') {
+            const indexPlayed = playIA();
+            const btn = { target: buttons[indexPlayed] }
+            click(btn)
+            listenerPlays(indexPlayed);
+            listenerStateGame();
         }
+    }, 1000);
+
+    function click({ target: button }) {
+        //if (isFill(button)) {
+        button.classList.remove('normal-font', 'increase-font');
+        button.classList.add('btn-selected');
+        button.innerHTML = getTurnPlay() === 'p1' ? 'X' : 'O';
+        //}
     }
 
     function mouseOver({ target: button }) {
@@ -69,8 +116,8 @@ window.onload = () => {
 
     function isFill(button) {
         return button.innerHTML === '' ||
-            button.innerHTML === 'x' ||
-            button.innerHTML === 'o';
+            button.innerHTML === SYMBOL_X ||
+            button.innerHTML === SYMBOL_O;
     }
 
     function effectFontSize(button) {
@@ -79,7 +126,7 @@ window.onload = () => {
     }
 
     function getSymbolTurnCurrent() {
-        return getTurnPlay() === 'p1' ? 'x' : 'o'
+        return getTurnPlay() === 'p1' ? SYMBOL_X : SYMBOL_O
     }
 
     function getTurnPlay() {
@@ -90,9 +137,7 @@ window.onload = () => {
         sessionStorage.setItem('play', newTurn);
     }
 
-    const btnNewGame = document.getElementById('new-game');
 
-    btnNewGame.addEventListener('click', newGame);
 
     function changeColorButtons() {
         areasWins.forEach(e => {
@@ -101,7 +146,7 @@ window.onload = () => {
     }
 
     function newGame() {
-        title.innerHTML = 'partida em andamento';
+        title.innerHTML = 'partida em andamento, ' + gameMode;
         buttons.forEach(btn => {
             btn.innerHTML = '';
             btn.classList.remove('btn-selected');
@@ -110,7 +155,7 @@ window.onload = () => {
             e.removeAttribute('disabled');
             e.style.color = '#fff';
         });
-
+        btnNewGame.setAttribute('disabled', 'disabled');
         title.classList.remove('blink')
         scoreO.forEach(e => e.classList.remove('blink'));
         scoreX.forEach(e => e.classList.remove('blink'));
@@ -121,7 +166,7 @@ window.onload = () => {
         areasWins = [];
     }
 
-    function listernerPlays(index) {
+    function listenerPlays(index) {
         let sequence = 0;
         areaGame[index] = getSymbolTurnCurrent();
         for (let i = 0; i < waysToWin.length; i++) {
@@ -144,20 +189,44 @@ window.onload = () => {
 
     }
 
+    function listenerStateGame() {
+        if (someoneWin) {
+            changeColorButtons();
+            finishWithWinner();
+        } else if (draw) finishWithDraw();
+        else toggleTurn();
+    }
+
+    function playIA() {
+        const symbol = getTurnPlay() === 'p1' ? 'X' : 'O';
+        let played = false;
+        let areaI;
+        do {
+            areaI = Math.round(Math.random() * 10);
+            if (areaGame[areaI] === -1) {
+                areaGame[areaI] = getSymbolTurnCurrent();
+                buttons[areaI].innerHTML = symbol;
+                played = true
+            }
+        } while (!played);
+        return areaI;
+    }
+
+
     function finishWithWinner() {
         const symbol = getSymbolTurnCurrent();
         title.innerHTML = 'parabéns <i>' + getSymbolTurnCurrent() + '</i>, você venceu!';
         title.classList.add('blink')
         buttons.forEach(e => e.setAttribute('disabled', 'disabled'));
-
-        if (symbol === 'x') {
+        btnNewGame.removeAttribute('disabled');
+        if (symbol === SYMBOL_X) {
             const newPoints = Number(sessionStorage.getItem('scoreX')) + 1
             sessionStorage.setItem('scoreX', newPoints);
             scoreX.forEach(e => {
                 e.innerHTML = sessionStorage.getItem('scoreX');
                 e.classList.add('blink');
             });
-        } else if (symbol === 'o') {
+        } else if (symbol === SYMBOL_O) {
             const newPoints = Number(sessionStorage.getItem('scoreO')) + 1
             sessionStorage.setItem('scoreO', newPoints);
             scoreO.forEach(e => {
@@ -170,6 +239,15 @@ window.onload = () => {
     function finishWithDraw() {
         title.innerHTML = 'Empate...';
         buttons.forEach(e => e.setAttribute('disabled', 'disabled'));
+        btnNewGame.removeAttribute('disabled');
+    }
+
+
+
+    function changeModeGame(newMode) {
+        gameMode = newMode;
+        sessionStorage.setItem('mode', gameMode);
+        newGame();
     }
 
 }

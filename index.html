@@ -18,7 +18,7 @@
     </header>
 
     <div class="title-game">
-        <h2 id="title">Partida em andamento</h2>
+        <h2 id="title"></h2>
     </div>
 
     <div class="container">
@@ -55,8 +55,17 @@
     </div>
 
     <footer>
-        <button id="new-game">Nova partida</button>
+        <button id="menu" class="btn">Menu</button>
+        <button id="new-game" class="btn" disabled>Nova partida</button>
     </footer>
+
+    <div class="modal d-none">
+        <section>
+            <button id="1vs1" class="btn">1 VS 1</button>
+            <button id="1vsIA" class="btn">1 VS IA</button>
+            <button id='voltar' class="btn-link">Voltar</button>
+        </section>
+    </div>
 
     <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.0"> </script> -->
     <script src="js/index.js"></script>

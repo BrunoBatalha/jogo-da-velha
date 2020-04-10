@@ -93,11 +93,6 @@ body .container .game-area {
     background: #005478
 }
 
-.game-area .line button:disabled {
-    cursor: no-drop;
-    background: #575757;
-}
-
 .increase-font {
     transition: font-size .2s;
     font-size: 4rem;
@@ -116,7 +111,8 @@ body footer {
     border-top: 5px solid #ff9419;
 }
 
-body footer button {
+.btn {
+    margin: 0px 5px;
     width: 200px;
     height: 40px;
     margin-top: 25px;
@@ -128,19 +124,76 @@ body footer button {
     border-radius: 2px;
 }
 
-body footer button:hover {
+.btn:hover {
     cursor: pointer;
     border-radius: 2px;
 }
 
-body footer button:active {
+.btn:active {
     position: relative;
     top: 2px;
     box-shadow: 0px 0px #005478;
 }
 
+button:disabled {
+    cursor: no-drop !important;
+    background: #575757 !important;
+    color: #333333;
+}
+
 .blink {
     animation: blink 1s infinite;
+}
+
+.d-none {
+    display: none;
+}
+
+.d-flex {
+    display: flex;
+}
+
+body .modal {
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgb(0, 0, 0, .5);
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+}
+
+body .modal section {
+    height: 200px;
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+}
+
+body .modal section .btn {
+    width: 100%;
+    margin: 5px 0px;
+}
+
+.modal section .btn-link {
+    font-size: 1rem;
+    margin-top: 20px;
+    background: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.modal section .btn-link:hover {
+    text-decoration: underline;
+}
+
+.modal section .btn-link:active {
+    color: #ff9419;
+    text-decoration: underline;
 }
 
 @keyframes blink {
@@ -167,8 +220,15 @@ body footer button:active {
     body, html {
         font-size: 10px;
     }
-    body footer button {
-        font-size: 2rem;
+    body .modal section {
+        width: 50%;
+        padding: 20px;
+    }
+    .btn {
+        font-size: 2.3rem !important;
+    }
+    .btn-link {
+        font-size: 2rem !important;
     }
 }
 
@@ -176,7 +236,14 @@ body footer button:active {
     body, html {
         font-size: 5px;
     }
-    body footer button {
-        font-size: 2.5rem;
+    body .modal section {
+        width: 100%;
+        padding: 20px;
+    }
+    .btn {
+        font-size: 3rem !important;
+    }
+    .btn-link {
+        font-size: 3rem !important;
     }
 }
