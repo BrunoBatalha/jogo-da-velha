@@ -86,7 +86,7 @@ window.onload = () => {
             listenerPlays(indexPlayed);
             listenerStateGame();
         }
-    }, 1000);
+    }, 500);
 
     function click({ target: button }) {
         //if (isFill(button)) {
@@ -164,6 +164,7 @@ window.onload = () => {
         someoneWin = false;
         draw = false
         areasWins = [];
+        if ((Math.round(Math.random() * 2) + 1) == 1) toggleTurn();
     }
 
     function listenerPlays(index) {
