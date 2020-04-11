@@ -79,7 +79,7 @@ window.onload = () => {
     }
 
     setInterval(() => {
-        if (gameMode === MODE_VS_IA && getTurnPlay() === 'p2') {
+        if (gameMode === MODE_VS_IA && getTurnPlay() === 'p2' && !someoneWin) {
             const indexPlayed = playIA();
             const btn = { target: buttons[indexPlayed] }
             click(btn)
